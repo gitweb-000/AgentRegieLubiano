@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#101012" />
+  <meta name="description" content="Explore internet connection options and choose an application form to get connected." />
+  <title>Internet Application</title>
+  <style>
+    :root {
+      --black: #101012;
+      --panel: #18181c;
+      --maroon: #720d2d;
+      --red: #a51d45;
+      --light: #e7e5e7;
+      --muted: #aaa6ad;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--black);
+      color: var(--light);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+
+    body.modal-open { overflow: hidden; }
+
+    .honeycomb {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .19;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='112' height='98' viewBox='0 0 112 98'%3E%3Cg fill='none' stroke='%23a51d45' stroke-width='1'%3E%3Cpath d='M28 1 55 16v31L28 62 1 47V16zM84 1l27 15v31L84 62 57 47V16zM56 49l27 15v31L56 110 29 95V64z'/%3E%3C/g%3E%3C/svg%3E");
+      mask-image: linear-gradient(to bottom, black, transparent 95%);
+    }
+
+    .topbar {
+      height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(22px, 7vw, 100px);
+      border-bottom: 1px solid #ffffff12;
+      position: relative;
+      z-index: 2;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+    width: 50px;
+    height: 50px;
+    background-image: url("images/logo.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: transparent;
+    clip-path: none;
+    box-shadow: none;
+    flex-shrink: 0;
+    }
+
+    .nav-note {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    main {
+      position: relative;
+      min-height: calc(100vh - 82px);
+      display: flex;
+      align-items: center;
+      padding: 90px clamp(22px, 10vw, 150px) 110px;
+      isolation: isolate;
+    }
+
+    .glow {
+      position: absolute;
+      width: 560px;
+      height: 560px;
+      right: -120px;
+      top: 4%;
+      background: radial-gradient(circle, #740d302c 0, transparent 68%);
+      z-index: -1;
+    }
+
+    .hero {
+      max-width: 850px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #d45b7e;
+      font-size: 11px;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow:before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: #b72a53;
+    }
+
+    h1 {
+      font-size: clamp(54px, 9vw, 112px);
+      line-height: .98;
+      letter-spacing: -.075em;
+      margin: 0 0 28px;
+      font-weight: 850;
+      max-width: 900px;
+    }
+
+    h1 span {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1.5px #c9c5ca;
+    }
+
+    .intro {
+      max-width: 560px;
+      color: #aaa6ad;
+      font-size: clamp(15px, 1.5vw, 18px);
+      line-height: 1.8;
+      margin: 0 0 38px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .apply {
+      display: inline-flex;
+      align-items: center;
+      gap: 34px;
+      padding: 18px 24px;
+      background: var(--maroon);
+      color: white;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .17em;
+      text-transform: uppercase;
+      border: 1px solid #a51d45;
+      transition: .25s ease;
+      box-shadow: 0 12px 34px #720d2d40;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .apply:hover {
+      background: #94153b;
+      transform: translateY(-3px);
+      box-shadow: 0 18px 42px #720d2d66;
+    }
+
+    .apply:focus-visible,
+    .form-choice:focus-visible,
+    .modal-close:focus-visible {
+      outline: 2px solid #f0a4bb;
+      outline-offset: 4px;
+    }
+
+    .arrow { font-size: 20px; line-height: 10px; }
+
+    .hint {
+      color: #77737a;
+      font-size: 12px;
+      letter-spacing: .04em;
+    }
+
+    .side-label {
+      position: absolute;
+      right: clamp(22px, 7vw, 100px);
+      bottom: 50px;
+      writing-mode: vertical-rl;
+      color: #69656c;
+      font-size: 10px;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+    }
+
+    .bottom-line {
+      position: absolute;
+      bottom: 0;
+      left: clamp(22px, 7vw, 100px);
+      right: clamp(22px, 7vw, 100px);
+      height: 1px;
+      background: linear-gradient(90deg, #a51d45aa, transparent);
+    }
+
+    .details {
+      padding: 82px clamp(22px, 10vw, 150px);
+      background: #151519;
+      border-top: 1px solid #ffffff10;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section-inner {
+      max-width: 1050px;
+      margin: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-kicker {
+      color: #d45b7e;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      margin: 0 0 14px;
+    }
+
+    h2 {
+      font-size: clamp(30px, 5vw, 52px);
+      letter-spacing: -.04em;
+      margin: 0 0 16px;
+    }
+
+    .section-intro {
+      max-width: 680px;
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 0 0 34px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .feature {
+      background: #1c1b20;
+      border: 1px solid #ffffff12;
+      padding: 24px;
+      min-height: 165px;
+    }
+
+    .feature-mark {
+      color: #d45b7e;
+      font-size: 22px;
+      margin-bottom: 18px;
+    }
+
+    .feature h3 { font-size: 16px; margin: 0 0 9px; }
+
+    .feature p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 34px;
+    }
+
+    .step {
+      border-left: 1px solid #a51d45;
+      padding: 4px 0 4px 17px;
+    }
+
+    .step strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 7px;
+    }
+
+    .step span {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    footer {
+      padding: 24px;
+      text-align: center;
+      color: #66616a;
+      font-size: 11px;
+      letter-spacing: .08em;
+    }
+
+    /* Application-form selection popup */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: #000000b8;
+      backdrop-filter: blur(7px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .22s ease, visibility .22s ease;
+    }
+
+    .modal-backdrop.is-open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      width: min(100%, 490px);
+      position: relative;
+      padding: clamp(26px, 5vw, 40px);
+      background: linear-gradient(145deg, #201a20, #141417 72%);
+      border: 1px solid #a51d4566;
+      box-shadow: 0 24px 90px #000000a8, 0 0 45px #720d2d24;
+      transform: translateY(16px) scale(.98);
+      transition: transform .22s ease;
+      overflow: hidden;
+    }
+
+    .modal-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .12;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='112' height='98' viewBox='0 0 112 98'%3E%3Cg fill='none' stroke='%23a51d45' stroke-width='1'%3E%3Cpath d='M28 1 55 16v31L28 62 1 47V16zM84 1l27 15v31L84 62 57 47V16zM56 49l27 15v31L56 110 29 95V64z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .modal-backdrop.is-open .modal-card {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-content { position: relative; z-index: 1; }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 2;
+      width: 36px;
+      height: 36px;
+      border: 1px solid #ffffff24;
+      background: #ffffff08;
+      color: var(--light);
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .modal-close:hover { background: #a51d4533; }
+
+    .modal-kicker {
+      color: #d45b7e;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      margin: 0 0 12px;
+    }
+
+    .modal-card h2 {
+      font-size: clamp(27px, 5vw, 36px);
+      margin: 0 35px 10px 0;
+    }
+
+    .modal-description {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0 0 25px;
+    }
+
+    .form-choices {
+      display: grid;
+      gap: 12px;
+    }
+
+    .form-choice {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      width: 100%;
+      padding: 17px 18px;
+      border: 1px solid #ffffff20;
+      background: #ffffff08;
+      color: var(--light);
+      text-decoration: none;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .form-choice:hover {
+      border-color: #b72a53;
+      background: #720d2d35;
+      transform: translateX(3px);
+    }
+
+    .choice-title {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      margin-bottom: 4px;
+    }
+
+    .choice-subtitle {
+      display: block;
+      color: #a9a2ab;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .choice-arrow {
+      color: #e47b9a;
+      font-size: 20px;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 760px) {
+      .features, .steps { grid-template-columns: 1fr; }
+      .feature { min-height: auto; }
+    }
+
+    @media (max-width: 600px) {
+      .topbar { height: 70px; }
+      .nav-note { display: none; }
+      main {
+        min-height: calc(100svh - 70px);
+        padding-top: 70px;
+        padding-bottom: 100px;
+      }
+      h1 { font-size: clamp(50px, 15vw, 76px); }
+      .side-label { display: none; }
+      .actions { gap: 18px; }
+      .apply { width: 100%; justify-content: space-between; }
+      .hint { line-height: 1.5; }
+      .details { padding-top: 65px; padding-bottom: 65px; }
+      .modal-card { padding: 28px 22px 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>AGENT REGIE LUBIANO</span>
+    </div>
+    <div class="nav-note">Get connected · Stay connected</div>
+  </header>
+
+  <main>
+    <div class="honeycomb" aria-hidden="true"></div>
+    <div class="glow" aria-hidden="true"></div>
+
+    <section class="hero" aria-labelledby="headline">
+      <div class="eyebrow">Your connection starts here</div>
+      <h1 id="headline">READY FOR<span>BETTER INTERNET?</span></h1>
+      <p class="intro">
+        Bring reliable internet to your home or business. Choose the application form
+        that matches your needs and take the first step toward getting connected.
+      </p>
+      <div class="actions">
+        <button class="apply" id="openApplicationModal" type="button"
+          aria-haspopup="dialog" aria-controls="applicationModal">
+          Apply now <span class="arrow" aria-hidden="true">↗</span>
+        </button>
+        <span class="hint">Choose from the available application forms.</span>
+      </div>
+    </section>
+
+    <div class="side-label">Connect · Browse · Stream</div>
+    <div class="bottom-line" aria-hidden="true"></div>
+  </main>
+
+  <section class="details">
+    <div class="honeycomb" aria-hidden="true"></div>
+    <div class="section-inner">
+      <p class="section-kicker">Internet made simple</p>
+      <h2>A better connection for everyday life.</h2>
+      <p class="section-intro">
+        Whether you're working from home, attending online classes, streaming your
+        favorite shows, or running a business, the right internet service helps you
+        stay connected.
+      </p>
+
+      <div class="features">
+        <article class="feature">
+          <div class="feature-mark" aria-hidden="true">⌁</div>
+          <h3>Work &amp; Study</h3>
+          <p>Support video meetings, online learning, research, and everyday productivity.</p>
+        </article>
+        <article class="feature">
+          <div class="feature-mark" aria-hidden="true">◈</div>
+          <h3>Stream &amp; Browse</h3>
+          <p>Enjoy browsing, entertainment, and keeping in touch with family and friends.</p>
+        </article>
+        <article class="feature">
+          <div class="feature-mark" aria-hidden="true">⌂</div>
+          <h3>Home or Business</h3>
+          <p>Explore connection options for your home or business and choose the right application form.</p>
+        </article>
+      </div>
+
+      <p class="section-kicker" style="margin-top:44px">How to apply</p>
+      <div class="steps">
+        <div class="step">
+          <strong>01 · Choose an application form</strong>
+          <span>Click Apply Now and select the form that matches your application.</span>
+        </div>
+        <div class="step">
+          <strong>02 · Complete the form</strong>
+          <span>Provide the requested contact information and installation details in the selected form.</span>
+        </div>
+        <div class="step">
+          <strong>03 · Wait for confirmation</strong>
+          <span>The service or sales team can contact you about availability, plans, requirements, and next steps.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>INTERNET APPLICATION · SERVICE AND COVERAGE SUBJECT TO PROVIDER CONFIRMATION</footer>
+
+  <!--
+    Replace each # in the href below with the matching Google Forms URL.
+    Example: href="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform"
+  -->
+  <div class="modal-backdrop" id="applicationModal" aria-hidden="true">
+    <section class="modal-card" role="dialog" aria-modal="true"
+      aria-labelledby="modalTitle" aria-describedby="modalDescription">
+      <button class="modal-close" id="closeApplicationModal" type="button"
+        aria-label="Close application choices">&times;</button>
+
+      <div class="modal-content">
+        <p class="modal-kicker">Start your application</p>
+        <h2 id="modalTitle">Choose an application form.</h2>
+        <p class="modal-description" id="modalDescription">
+          Select one of the options below. You'll be redirected to its application form.
+        </p>
+
+        <div class="form-choices">
+          <a class="form-choice" href="https://docs.google.com/forms/d/e/1FAIpQLSeJy5A84ZLPuqvVI_0gLYc2ShWsjL6kHIe2hjT00kn9QEkImQ/viewform" target="_blank" rel="noopener noreferrer">
+            <span>
+              <span class="choice-title">PLDT ENTERPRISE APPLICATION</span>
+              <span class="choice-subtitle">Details...</span>
+            </span>
+            <span class="choice-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <a class="form-choice" href="https://forms.gle/2Xv1qgieViVJh8CNA" target="_blank" rel="noopener noreferrer">
+            <span>
+              <span class="choice-title">CORPORATION APPLICATION FORM</span>
+              <span class="choice-subtitle">Details...</span>
+            </span>
+            <span class="choice-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <a class="form-choice" href="#" target="_blank" rel="noopener noreferrer">
+            <span>
+              <span class="choice-title">GForm 3</span>
+              <span class="choice-subtitle">Details...</span>
+            </span>
+            <span class="choice-arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const modal = document.getElementById("applicationModal");
+    const openModalButton = document.getElementById("openApplicationModal");
+    const closeModalButton = document.getElementById("closeApplicationModal");
+    const firstFormLink = modal.querySelector(".form-choice");
+
+    function openApplicationModal() {
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+      closeModalButton.focus();
+    }
+
+    function closeApplicationModal() {
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+      openModalButton.focus();
+    }
+
+    openModalButton.addEventListener("click", openApplicationModal);
+    closeModalButton.addEventListener("click", closeApplicationModal);
+
+    // Close when the user clicks the dark area outside the popup.
+    modal.addEventListener("click", function (event) {
+      if (event.target === modal) closeApplicationModal();
+    });
+
+    // Close the popup with the Escape key.
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && modal.classList.contains("is-open")) {
+        closeApplicationModal();
+      }
+    });
+  </script>
+</body>
+</html>
