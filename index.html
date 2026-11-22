@@ -311,7 +311,6 @@
       letter-spacing: .08em;
     }
 
-    /* Application-form selection popup */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -555,10 +554,6 @@
 
   <footer>INTERNET APPLICATION · SERVICE AND COVERAGE SUBJECT TO PROVIDER CONFIRMATION</footer>
 
-  <!--
-    Replace each # in the href below with the matching Google Forms URL.
-    Example: href="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform"
-  -->
   <div class="modal-backdrop" id="applicationModal" aria-hidden="true">
     <section class="modal-card" role="dialog" aria-modal="true"
       aria-labelledby="modalTitle" aria-describedby="modalDescription">
@@ -581,6 +576,7 @@
             <span class="choice-arrow" aria-hidden="true">↗</span>
           </a>
 
+         <!--
           <a class="form-choice" href="https://forms.gle/2Xv1qgieViVJh8CNA" target="_blank" rel="noopener noreferrer">
             <span>
               <span class="choice-title">CORPORATION APPLICATION FORM</span>
@@ -596,6 +592,7 @@
             </span>
             <span class="choice-arrow" aria-hidden="true">↗</span>
           </a>
+          -->
         </div>
       </div>
     </section>
@@ -624,12 +621,10 @@
     openModalButton.addEventListener("click", openApplicationModal);
     closeModalButton.addEventListener("click", closeApplicationModal);
 
-    // Close when the user clicks the dark area outside the popup.
     modal.addEventListener("click", function (event) {
       if (event.target === modal) closeApplicationModal();
     });
 
-    // Close the popup with the Escape key.
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape" && modal.classList.contains("is-open")) {
         closeApplicationModal();
